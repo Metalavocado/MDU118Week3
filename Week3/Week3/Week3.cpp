@@ -6,7 +6,6 @@
 #include <string>
 #include <sstream>
 
-
 class Vector2
 {
 public:
@@ -26,7 +25,6 @@ public:
 	float x, y;
 
 };
-
 
 class Shape
 {
@@ -72,7 +70,7 @@ class Box : public Shape
 {
 public:
 
-	Box(float _length, float _width)
+	Box(float _length = 0, float _width = 0)
 	{
 		length = _length;
 		width = _width;
@@ -89,9 +87,6 @@ public:
 
 };
 
-
-
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 	{
@@ -101,31 +96,59 @@ int _tmain(int argc, _TCHAR* argv[])
 			elcShapeName,
 			elcXCoordinate,
 			elcYCoordinate,
-	
+
 			elcNumLineComponents
 		};
-	
-		std::string csvLine = "Circle,AwesomeCircle,1.3,2.5";
+
+		std::string csvLine = "Circle,AwesomeCircle,1.3f,2.5f";
 		std::istringstream inputStream(csvLine);
-	
+
 		LineComponent currentComponent = elcShapeType;
-	
+
+		std::string shapeType;
+		std::string shapeName;
+		float coordX;
+		float coordY;
+
 		std::string lineElement;
 		while (std::getline(inputStream, lineElement, ','))
 		{
 
 			std::cout << lineElement << std::endl;
 			currentComponent = (LineComponent)(currentComponent + 1);
-	
-			if ((currentComponent == elcXCoordinate) || (currentComponent == elcYCoordinate))
+
+
+			if (currentComponent == elcXCoordinate)
 			{
 				float lineElementAsFloat = std::atof(lineElement.c_str());
-			};
+				coordX = lineElementAsFloat;
+			}
+
+			if (currentComponent == elcYCoordinate)
+			{
+				float lineElementAsFloat = std::atof(lineElement.c_str());
+				coordY = lineElementAsFloat;
+			}
+
+			if (currentComponent == elcShapeType)
+			{
+				shapeType = lineElement;
+			}
+
+			if (currentComponent == elcShapeName)
+			{
+				shapeName = lineElement;
+			}
+
 
 		};
 
+		std::cout << shapeType << shapeName << coordX << coordX << std::endl;
+
+
+
 		std::ostringstream outputStream;
-		outputStream << "Circle" << "," << "AewsomeCircle" << "," << 1.3f << "," << -2.5f;
+		outputStream << "Circle" << "," << "AwesomeCircle" << "," << 1.3f << "," << -2.5f;
 		std::string builtCSVLine = outputStream.str();
 
 		//std::string shapeType;
@@ -133,9 +156,20 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	{
-		Box box = Box(5,2);
 
-		std::cout << box.length << ", " << box.width << std::endl;
+		Box box = Box();
+
+		box.length = 5.0f;
+		box.width = 4.0f;
+		box.name = "Box1";
+		box.position.x = 3.1f;
+		box.position.y = 2.8f;
+
+		std::ostringstream boxOutputStream;
+		boxOutputStream << "Box" << "," << box.name << "," << box.position.x << "," << box.position.y;
+		std::string builtCSVLine = boxOutputStream.str();
+
+		std::cout << builtCSVLine << std::endl;
 
 	};
 
