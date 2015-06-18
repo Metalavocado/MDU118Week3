@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <string>
+#include <sstream>
 
 
 class Vector2
@@ -15,12 +16,12 @@ public:
 		x = _x;
 		y = _y;
 		std::cout << "Vector2 contructed" << std::endl;
-	}
+	};
 	// Vector2 Deconstructor
 	~Vector2()
 	{
 		std::cout << "Vector2 decontructed" << std::endl;
-	}
+	};
 
 	float x, y;
 
@@ -36,12 +37,12 @@ public:
 		name = _name;
 		position = _position;
 		std::cout << "Shape contructed" << std::endl;
-	}
+	};
 
 	virtual ~Shape()
 	{
 		std::cout << "Shape decontructed" << std::endl;
-	}
+	};
 
 	std::string name;
 
@@ -56,12 +57,12 @@ public:
 	Circle(float _radius)
 	{
 		std::cout << "Circle contructed" << std::endl;
-	}
+	};
 
 	virtual ~Circle()
 	{
 		std::cout << "Circle decontructed" << std::endl;
-	}
+	};
 
 	float radius;
 
@@ -71,17 +72,20 @@ class Box : public Shape
 {
 public:
 
-	Box(float _x, float _y)
+	Box(float _length, float _width)
 	{
+		length = _length;
+		width = _width;
+
 		std::cout << "Box contructed" << std::endl;
-	}
+	};
 
 	virtual ~Box()
 	{
 		std::cout << "Box decontructed" << std::endl;
-	}
+	};
 
-	float x, y;
+	float length, width;
 
 };
 
@@ -91,12 +95,49 @@ public:
 int _tmain(int argc, _TCHAR* argv[])
 {
 	{
-		Shape shape;
-		shape.name = "shape";
-		shape.position.x = 5;
-		shape.position.y = 3.1;
-		std::cout << shape.name << ", " << shape.position.x << ", " << shape.position.y << std::endl;
+		typedef enum LineComponent
+		{
+			elcShapeType,
+			elcShapeName,
+			elcXCoordinate,
+			elcYCoordinate,
+	
+			elcNumLineComponents
+		};
+	
+		std::string csvLine = "Circle,AwesomeCircle,1.3,2.5";
+		std::istringstream inputStream(csvLine);
+	
+		LineComponent currentComponent = elcShapeType;
+	
+		std::string lineElement;
+		while (std::getline(inputStream, lineElement, ','))
+		{
+
+			std::cout << lineElement << std::endl;
+			currentComponent = (LineComponent)(currentComponent + 1);
+	
+			if ((currentComponent == elcXCoordinate) || (currentComponent == elcYCoordinate))
+			{
+				float lineElementAsFloat = std::atof(lineElement.c_str());
+			};
+
+		};
+
+		std::ostringstream outputStream;
+		outputStream << "Circle" << "," << "AewsomeCircle" << "," << 1.3f << "," << -2.5f;
+		std::string builtCSVLine = outputStream.str();
+
+		//std::string shapeType;
+		//inputStream >> shapeType;
 	}
+
+	{
+		Box box = Box(5,2);
+
+		std::cout << box.length << ", " << box.width << std::endl;
+
+	};
 
 	return 0;
 }
