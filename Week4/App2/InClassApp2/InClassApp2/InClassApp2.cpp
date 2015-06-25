@@ -7,10 +7,13 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
+typedef std::string string;
 
 typedef struct MeshInfo
 {
-	MeshInfo(const std::string& _name, int _numVerts, int _numTris, float _scale)
+	MeshInfo(const std::string& _name = "", int _numVerts = 0, int _numTris = 0, float _scale = 0)
 	{
 		name = _name;
 		numVerts = _numVerts;
@@ -64,10 +67,37 @@ int _tmain(int argc, _TCHAR* argv[])
 			{
 				MeshInfo& meshInfo = *meshIt;
 
+				size_t nameSize = meshInfo.name.size();
+				meshBinary.write(reinterpret_cast<char*>(&nameSize), sizeof(nameSize));										//Adding the size of the string allows for easier identification and use etc.
+				meshBinary.write(meshInfo.name.c_str(), meshInfo.name.size);
+
 				meshBinary.write(reinterpret_cast<char*>(&meshInfo.numTris), sizeof(meshInfo.numTris));						//requires casting, reinterpret_cast does no safety/sanity checking, it will cast it anyway
 				meshBinary.write(reinterpret_cast<char*>(&meshInfo.numVerts), sizeof(meshInfo.numVerts));
 				meshBinary.write(reinterpret_cast<char*>(&meshInfo.scale), sizeof(meshInfo.scale));
+
 			}
+
+		}
+
+		{
+			std::ifstream meshBinary("mesh.bin", std::ios::binary);
+
+			MeshInfo meshInfo;
+
+			size_t nameSize;
+
+			meshBinary.read(reinterpret_cast<char*>(&nameSize), sizeof(nameSize));
+
+			char* nameData = new char[nameSize + 1];
+			meshBinary.read(nameData, nameSize);
+			nameData[nameSize] = '\0';
+			meshInfo.name = std::string(nameData);
+
+			meshBinary.read(reinterpret_cast<char*>(&meshInfo.numTris), sizeof(meshInfo.numTris));
+			meshBinary.read(reinterpret_cast<char*>(&meshInfo.numVerts), sizeof(meshInfo.numVerts));
+			meshBinary.read(reinterpret_cast<char*>(&meshInfo.scale), sizeof(meshInfo.scale));
+
+
 		}
 
 	}
